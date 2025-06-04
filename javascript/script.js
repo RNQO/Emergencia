@@ -1,46 +1,104 @@
-function mostrarMensaje(msg, ok = false) {
-  const mensaje = document.getElementById("mensaje");
-  mensaje.textContent = msg;
-  mensaje.className = ok ? "text-success text-center mb-3" : "text-danger text-center mb-3";
-}
+
+const form = document.getElementById('formularioPaciente');
+const tabla = document.getElementById('tablaPacientes').querySelector('tbody');
+const authSection = document.getElementById('authSection');
+const pacientesSection = document.getElementById('pacientesSection');
+const mensajeAuth = document.getElementById('mensajeAuth');
+
+const contadorCritico = document.getElementById('contadorCritico');
+const contadorUrgente = document.getElementById('contadorUrgente');
+const contadorModerado = document.getElementById('contadorModerado');
+const contadorLeve = document.getElementById('contadorLeve');
+
+let pacientes = [];
+
 
 function registrar() {
   const usuario = document.getElementById('usuario').value.trim();
   const clave = document.getElementById('clave').value;
-  const ci = document.getElementById('ci').value.trim();
-  const esMedico = document.getElementById('esMedico').value;
+  const esMedico = document.getElementById('esMedico').checked;
 
-  if (usuario === '' || clave.length < 6 || ci === '') {
-    mostrarMensaje("Completa todos los campos correctamente.");
+  if (!usuario || clave.length < 6) {
+    mostrarMensaje("Usuario (CI) obligatorio y contraseña mínimo 6 caracteres.", false);
     return;
   }
 
-  if (esMedico !== 'si') {
-    mostrarMensaje("Solo los médicos pueden crear una cuenta.");
+  if (!esMedico) {
+    mostrarMensaje("Solo médicos pueden registrarse.", false);
     return;
   }
 
-  localStorage.setItem(`user_${usuario}`, JSON.stringify({ clave, ci }));
-  mostrarMensaje("✅ Cuenta creada con éxito. Ahora puedes iniciar sesión.", true);
+
+  if (localStorage.getItem(`user_${usuario}`)) {
+    mostrarMensaje("El usuario ya está registrado.", false);
+    return;
+  }
+
+  localStorage.setItem(`user_${usuario}`, clave);
+  mostrarMensaje("✅ Registro exitoso. Ahora puede iniciar sesión.", true);
 }
+
 
 function login() {
   const usuario = document.getElementById('usuario').value.trim();
   const clave = document.getElementById('clave').value;
-  const esMedico = document.getElementById('esMedico').value;
+  const esMedico = document.getElementById('esMedico').checked;
 
-  const datos = localStorage.getItem(`user_${usuario}`);
-  if (!datos) {
-    mostrarMensaje("Usuario no encontrado.");
+  if (!usuario || clave.length < 6) {
+    mostrarMensaje("Ingrese usuario y contraseña válidos.", false);
     return;
   }
 
-  const { clave: claveGuardada } = JSON.parse(datos);
-
-  if (claveGuardada === clave && esMedico === 'si') {
-    document.getElementById('authSection').style.display = 'none';
-    document.getElementById('pacientesSection').style.display = 'block';
-  } else {
-    mostrarMensaje("Credenciales incorrectas o acceso denegado.");
+  if (!esMedico) {
+    mostrarMensaje("Solo médicos pueden iniciar sesión.", false);
+    return;
   }
+
+  const guardado = localStorage.getItem(`user_${usuario}`);
+  if (guardado && guardado === clave) {
+    mostrarMensaje("", true);
+    authSection.style.display = 'none';
+    pacientesSection.style.display = 'block';
+    form.reset();
+    actualizarContadores();
+  } else {
+    mostrarMensaje("Credenciales incorrectas o usuario no registrado.", false);
+  }
+}
+
+function mostrarMensaje(msg, exito) {
+  mensajeAuth.textContent = msg;
+  mensajeAuth.className = exito ? 'mt-3 text-success' : 'mt-3 text-danger';
+}
+
+
+function validarFormulario(datos) {
+  if (
+    !datos.nombre || !datos.edad || !datos.genero || !datos.documento ||
+    !datos.sintomas || !datos.gravedad || !datos.tratamiento ||
+    !datos.medicamentos || !datos.examenes
+  ) {
+    alert("Por favor, complete todos los campos.");
+    return false;
+  }
+
+  if (isNaN(datos.edad) || datos.edad <= 0) {
+    alert("Edad debe ser un número mayor a 0.");
+    return false;
+  }
+
+  if (datos.documento.length < 5) {
+    alert("Documento debe tener al menos 5 caracteres.");
+    return false;
+  }
+
+  if (datos.gravedad === "critico") {
+    alert("⚠️ Paciente en estado crítico registrado.");
+  }
+
+  return true;
+}
+
+
+function agregarPaciente(paciente) {
 }
