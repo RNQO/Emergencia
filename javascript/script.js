@@ -103,6 +103,5 @@ function validarFormulario(datos) {
 function agregarPaciente(paciente) {
 }
 
-
   return true;
 }
