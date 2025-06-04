@@ -1,24 +1,20 @@
-body {
-  background-color: #f8f9fa;
+.critico {
+  background-color: #f8d7da !important; 
+}
+.urgente {
+  background-color: #ffe5b4 !important; 
+}
+.moderado {
+  background-color: #fff3cd !important; 
+}
+.leve {
+  background-color: #d4edda !important; 
 }
 
-.container {
-  max-width: 400px;
-  margin-top: 50px;
-  padding: 20px;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+#mensajeAuth {
+  min-height: 24px;
 }
 
-#pacientesSection {
-  display: none;
-}
-
-.text-success {
-  color: green;
-}
-
-.text-danger {
-  color: red;
+.btn {
+  font-weight: 600;
 }
